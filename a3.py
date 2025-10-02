@@ -214,6 +214,23 @@ def bye_action(dummy: List[str]) -> None:
     raise KeyboardInterrupt
 
 
+def movie_by_firstletter(matches: List[str]) -> List[str]:
+    """Finds titles of all movies that start with a given letter
+    
+    Args:
+        matches - a list of 1 string, a letter
+        
+    Returns:
+        a list of movie titles that start with the letter
+    """
+    result = []
+    letter = matches[0]
+    for movie in movie_db:
+        first_letters = [movie[0] for movie in movie_db]
+        if letter == first_letters:
+            result.append(get_title(movie))
+    return result
+
 # The pattern-action list for the natural language query system A list of tuples of
 # pattern and action It must be declared here, after all of the function definitions
 pa_list: List[Tuple[List[str], Callable[[List[str]], List[Any]]]] = [
@@ -245,7 +262,12 @@ def search_pa_list(src: List[str]) -> List[str]:
         a list of answers. Will be ["I don't understand"] if it finds no matches and
         ["No answers"] if it finds a match but no answers
     """
-    pass
+    for pat, act in pa_list:
+        mat = match(pat, src)
+        if mat is not None:
+            answer = act(mat)
+            return answer if answer else ["No answers"]
+    return ["I don't understand"]
 
 
 def query_loop() -> None:
@@ -287,7 +309,7 @@ if __name__ == "__main__":
     ), "failed title_before_year test"
     assert isinstance(title_after_year(["1990"]), list), "title_after_year not returning a list"
     assert sorted(title_after_year(["1990"])) == sorted(
-        ["boyz n the hood", "dead again", "the crying game", "flirting", "malcolm x"]
+        ["boyz n the hood", "dead again", "the crying game", "flirting", "malcolm x", "the nightmare before christmas"]
     ), "failed title_after_year test"
     assert isinstance(director_by_title(["jaws"]), list), "director_by_title not returning a list"
     assert sorted(director_by_title(["jaws"])) == sorted(
