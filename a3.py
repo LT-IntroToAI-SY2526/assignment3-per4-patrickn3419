@@ -214,7 +214,7 @@ def bye_action(dummy: List[str]) -> None:
     raise KeyboardInterrupt
 
 
-def movie_by_firstletter(matches: List[str]) -> List[str]:
+def title_by_firstletter(matches: List[str]) -> List[str]:
     """Finds titles of all movies that start with a given letter
     
     Args:
@@ -226,9 +226,9 @@ def movie_by_firstletter(matches: List[str]) -> List[str]:
     result = []
     letter = matches[0]
     for movie in movie_db:
-        first_letters = [movie[0] for movie in movie_db]
-        if letter == first_letters:
-            result.append(get_title(movie))
+        title = movie[0]
+        if title[0].lower() == letter.lower():  # Case-insensitive comparison
+            result.append(get_title(movie))  # Assuming get_title extracts the title
     return result
 
 # The pattern-action list for the natural language query system A list of tuples of
@@ -246,6 +246,7 @@ pa_list: List[Tuple[List[str], Callable[[List[str]], List[Any]]]] = [
     (str.split("who acted in %"), actors_by_title),
     (str.split("when was % made"), year_by_title),
     (str.split("in what movies did % appear"), title_by_actor),
+    (str.split("what movies start with the letter _"), title_by_firstletter),
     (["bye"], bye_action),
 ]
 
@@ -349,5 +350,12 @@ if __name__ == "__main__":
     assert sorted(
         search_pa_list(["what", "movies", "were", "made", "in", "2020"])
     ) == sorted(["No answers"]), "failed search_pa_list test 3"
+
+    assert sorted(title_by_firstletter(["l"])) == sorted(
+        [
+            "lawrence of arabia",
+            "local hero",
+        ]
+    ), "failed title_by_firstletter test"
 
     print("All tests passed!")
