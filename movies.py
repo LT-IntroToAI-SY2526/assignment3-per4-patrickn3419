@@ -435,4 +435,15 @@ movie_db: List[Tuple[str, str, int, List[str]]] = [
             "spike lee",
         ],
     ),
+    (
+        "the nightmare before christmas",
+        "henry selick",
+        1993,
+        [
+            "chris sarandon",
+            "catherine o'hara",
+            "ken page",
+            "danny elfman",
+        ],
+    ),
 ]
